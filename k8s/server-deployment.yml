@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: server-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: server
+  template:
+    metadata:
+      labels:
+        component: server
+    spec:
+      containers:
+        - name: nodejs-express-sequelize-postgresql
+          image: umarali99/node-api:v1
+          ports:
+            - containerPort: 8081
+          env:
+            - name: USER
+              value: postgres
+            - name: HOST
+              value: postgres-cluster-ip-service
+            - name: PGPORT
+              value: "5432"
+            - name: DB
+              value: postgres
+            - name: PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: pgpass
+                  key: pgPASSWORD
